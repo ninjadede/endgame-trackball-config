@@ -4,19 +4,27 @@
 #include <input/processors/report_rate_limit.dtsi>
 #include <behaviors/p2sm_behaviors.dtsi>
 #include <behaviors/rate_limit.dtsi>
+#include <behaviors/auto_hold.dtsi>
 
 &zip_2s_mixer {
 	status = "okay";
 	sync-report-ms = <1>;
-	sync-scroll-report-ms = <4>;
 
-	twist-interference-thres = <16>; // CPI and sync-scroll-report-ms dependent
-	twist-thres = <24>; // CPI and sync-scroll-report-ms dependent
+	sync-scroll-report-ms = <8>;
+	twist-thres = <3>;
+	twist-interference-thres = <200>;
+	twist-interference-window = <8>;
 
 	// arbitrary bounding box (0, 0, 0) - (255, 255, 255)
 	ball-radius = <102>; // maximum = 127
 	sensor1-pos = [31 4B 2D];  // X Y Z
 	sensor2-pos = [C1 3C 2D];
+
+	feedback-gpios = <&gpio0 24 GPIO_ACTIVE_HIGH>;
+	feedback-extra-gpios = <&gpio1 0 GPIO_ACTIVE_HIGH>;
+	twist-feedback-threshold = <20>;
+	twist-feedback-delay = <8>;
+	twist-feedback-duration = <50>;
 };
 
 / {
@@ -72,7 +80,7 @@
 
 	trackball_primary: trackball_primary@0 {
 		status = "okay";
-		compatible = "pixart,pmw3610";
+		compatible = "pixart,pmw3610-efogtech";
 		init-retry-interval = <20>;
 		init-retry-count = <100>;
 		reg = <0>;
@@ -102,7 +110,7 @@
 
 	trackball_secondary: trackball_secondary@0 {
 		status = "okay";
-		compatible = "pixart,pmw3610";
+		compatible = "pixart,pmw3610-efogtech";
 		init-retry-interval = <20>;
 		init-retry-count = <100>;
 		reg = <0>;
